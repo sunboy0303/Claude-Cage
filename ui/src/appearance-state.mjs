@@ -1,6 +1,17 @@
+import { isLinux, isWindows } from "./platform.mjs";
+
 export const systemUIFont =
   '-apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif';
-export const systemCodeFont = '"SF Mono", Menlo, Consolas, monospace';
+// The terminal uses the first family that resolves, and xterm advances wide
+// characters by exactly two cells. A Latin-only first family therefore leaves
+// visible gaps in CJK text, because the fallback glyph is narrower than two of
+// that family's cells. Linux distributions ship CJK-capable monospace faces, so
+// prefer one that keeps the 2:1 advance; keep the macOS stack unchanged.
+export const systemCodeFont = isLinux
+  ? '"Sarasa Mono SC", "Noto Sans Mono CJK SC", "Noto Sans Mono", "DejaVu Sans Mono", monospace'
+  : isWindows
+    ? '"Cascadia Mono", Consolas, "Sarasa Mono SC", monospace'
+    : '"SF Mono", Menlo, Monaco, monospace';
 import { presets } from "./appearance-presets.mjs";
 export {
   presets,

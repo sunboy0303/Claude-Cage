@@ -37,6 +37,22 @@ import {
   systemCodeFont,
   themeVariables,
 } from "./appearance-state.mjs";
+import { isMac, isWindows } from "./platform.mjs";
+
+// Only offer faces the current platform actually ships. The previous fixed list
+// named macOS fonts everywhere, so choosing one on Linux or Windows always fell
+// back to a generic monospace face.
+const codeFontOptions = isMac
+  ? ["SF Mono", "Menlo", "Monaco", "JetBrains Mono"]
+  : isWindows
+    ? ["Cascadia Mono", "Consolas", "JetBrains Mono", "Sarasa Mono SC"]
+    : [
+        "Sarasa Mono SC",
+        "Noto Sans Mono CJK SC",
+        "JetBrains Mono",
+        "Ubuntu Mono",
+        "DejaVu Sans Mono",
+      ];
 
 function SettingRow({ label, description, children }) {
   return (
@@ -340,10 +356,9 @@ function ThemeCard({ variant, value, active, onChange }) {
                 patch({ fonts: { ...value.fonts, code: next } })
               }
             >
-              <option value="SF Mono" />
-              <option value="Menlo" />
-              <option value="Monaco" />
-              <option value="JetBrains Mono" />
+              {codeFontOptions.map((name) => (
+                <option key={name} value={name} />
+              ))}
             </InlineSelect>
           </label>
           <label className="appearance-switch">
